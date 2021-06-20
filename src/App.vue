@@ -4,24 +4,15 @@
 </template>
 
 <script lang="ts">
-import { inject, onMounted, ref } from "vue";
-import UserCard from "@/components/UserCard/UserCard.vue";
-import { CommsService, User } from "@/services/Comms/types";
+import { defineComponent } from "vue";
+import HelloWorld from "./components/HelloWorld.vue";
 
-export default {
+export default defineComponent({
   name: "App",
-  components: { UserCard },
-  setup() {
-    const $comms: CommsService | undefined = inject("$comms");
-    const user = ref<User>();
-
-    onMounted(async () => {
-      user.value = await $comms?.getUser();
-    });
-
-    return { user };
+  components: {
+    HelloWorld,
   },
-};
+});
 </script>
 
 <style lang="scss">
