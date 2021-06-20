@@ -3,20 +3,26 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import UserCard from "@/components/UserCard/UserCard.vue";
+import { CommsService, User } from "@/services/Comms/types";
 
-export default defineComponent({
+export default {
   name: "App",
   components: {
     UserCard,
   },
   setup() {
-    const user = ref<any>();
+    const $comms: CommsService | undefined = inject("$comms");
+    const user = ref<User>();
+
+    onMounted(async () => {
+      user.value = await $comms?.getUser();
+    });
 
     return { user };
   },
-});
+};
 </script>
 
 <style lang="scss">

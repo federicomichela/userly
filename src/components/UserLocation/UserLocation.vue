@@ -22,15 +22,16 @@ export default {
     state: { type: String, required: false },
     coordinates: { type: Object as () => Coordinates, required: false },
   },
-  setup(props: GenericObject): void {
-    const utils: UtilsService = inject("$utils");
+  setup(props: GenericObject): GenericObject {
+    const utils: UtilsService | undefined = inject("$utils");
 
     const fullAddress = computed<string>(() => {
-      return utils.toSortedString(
+      const placeholder = "42 Street, Some City, Postal Code, Some State";
+      return utils?.toSortedString(
         props,
         ["street.number", "street.name", "city", "postcode", "state"],
-        "42 Street, Some City, Postal Code, Some State"
-      );
+        placeholder
+      ) || "42 Street, Some City, Postal Code, Some State";
     });
 
     return { fullAddress };
