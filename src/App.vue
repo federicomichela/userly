@@ -46,5 +46,28 @@ body {
     align-items: center;
     justify-content: center;
   }
+
+  .collapsable {
+    width: 100%;
+    position: relative;
+
+    & > span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 85%;
+    }
+
+    &:hover::after {
+      content: attr(data-hover);
+      position: absolute;
+      font-size: .7em;
+      padding: .3em .5em;
+      bottom: 2.5em;
+      color: lightgray;
+      background: gray;
+      border-radius: 10px;
+    }
+  }
 }
 </style>

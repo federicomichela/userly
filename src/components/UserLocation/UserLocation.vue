@@ -2,7 +2,7 @@
   <a
     :href="`https://www.google.com/maps/search/?api=1&query=${coordinates?.latitude || 0},${coordinates?.longitude || 0}`"
     :data-hover="fullAddress"
-    class="address"
+    class="address collapsable"
     target="_blank">
     <span>{{ fullAddress }}</span>
   </a>
@@ -10,20 +10,51 @@
 
 <script lang="ts">
 import { Coordinates, Street } from "@/services/Comms/types";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 
 export default {
   name: "UserLocation",
   props: {
     street: { type: Object as () => Street, required: false },
-    city: { type: String, default: "Some City" },
-    postcode: { type: [String, Number], default: "Postal Code" },
-    state: { type: String, default: "Some State" },
-    coordinates: { type: Object as () => Coordinates, required: false }
+    city: { type: String, required: false },
+    postcode: { type: [String, Number], required: false },
+    state: { type: String, required: false },
+    coordinates: { type: Object as () => Coordinates, required: false },
   },
   setup(props: any) {
     const fullAddress = computed<string>(() => {
-      return `${props.street?.number || 42} ${props.street?.name || "Street"}, ${props.city}, ${props.postcode}, ${props.state}`;
+      if (Object.values(props).every((e: string | number) => !e)) {
+        return "42 Street, Some City, Postal Code, Some State";
+      }
+
+      const addressOrderedProps = [
+        "street.number",
+        "street.name",
+        "city",
+        "postcode",
+        "state",
+      ];
+      const address = [];
+      for (const prop of addressOrderedProps) {
+        let parts = prop.split(".");
+        let value = props[parts.splice(0, 1)];
+
+        if (!value) continue;
+
+        for (const subProp of parts) {
+          value = value[subProp];
+        }
+
+        if (value) {
+          if (parts.length && address.length) {
+            address[address.length - 1] += ` ${value}`;
+          } else {
+            address.push(value);
+          }
+        }
+      }
+
+      return address.join(", ");
     });
 
     return { fullAddress };
@@ -33,29 +64,8 @@ export default {
 
 <style lang="scss">
 .address {
-  width: 100%;
-  position: relative;
-
   &::before {
     @include icon("place");
-  }
-
-  &:hover::after {
-    content: attr(data-hover);
-    position: absolute;
-    font-size: .7em;
-    padding: .3em .5em;
-    bottom: 2.5em;
-    color: lightgray;
-    background: gray;
-    border-radius: 10px;
-  }
-
-  span {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 85%;
   }
 }
 </style>

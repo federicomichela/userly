@@ -3,5 +3,5 @@ module.exports = {
   transform: {
     "^.+\\.vue$": "vue-jest",
   },
-  testMatch: ["**/tests/**/*.[jt]s?(x)"],
+  testMatch: ["**/*.(spec|test).[jt]s?(x)"],
 };
