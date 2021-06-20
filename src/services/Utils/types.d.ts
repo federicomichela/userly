@@ -1,5 +1,5 @@
 export type GenericObject = { [key: string]: any };
 
 export interface UtilsService {
-  toSortedString(obj: GenericObject, orderedKeys: string[], placeholder?: string): string | undefined
+  toSortedString(obj: GenericObject, orderedKeys: string[], placeholder?: string, separator=", "): string | undefined
 }

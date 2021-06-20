@@ -28,10 +28,10 @@ export default {
     const fullAddress = computed<string>(() => {
       const placeholder = "42 Street, Some City, Postal Code, Some State";
       return utils?.toSortedString(
-        props,
-        ["street.number", "street.name", "city", "postcode", "state"],
-        placeholder
-      ) || "42 Street, Some City, Postal Code, Some State";
+          props,
+          ["street.number", "street.name", "city", "postcode", "state"],
+          placeholder
+        ) || "42 Street, Some City, Postal Code, Some State";
     });
 
     return { fullAddress };

@@ -1,8 +1,8 @@
 import _Vue from "vue";
 import { GenericObject } from "@/services/Utils/types";
 
-class Utils {
-  public toSortedString(obj: GenericObject, orderedKeys: string[], placeholder?: string): string | undefined {
+export class Utils {
+  public toSortedString(obj: GenericObject, orderedKeys: string[], placeholder?: string, separator=", "): string | undefined {
     if (Object.values(obj).every((e: string | unknown) => !e)) {
       return placeholder;
     }
@@ -32,7 +32,7 @@ class Utils {
       }
     }
 
-    return strValues.join(", ");
+    return strValues.join(separator);
   }
 }
 

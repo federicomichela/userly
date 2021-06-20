@@ -1,13 +1,17 @@
 import { shallowMount } from "@vue/test-utils";
 import UserLocation from "./UserLocation.vue";
-import { nextTick } from "vue";
+import { $utils } from "@/unitTestsUtils";
 
 describe("UserLocation.vue", () => {
   it("renders defaults full address and redirects to coord 0, 0", () => {
-    const wrapper = shallowMount(UserLocation);
+    const wrapper = shallowMount(UserLocation, {
+      global: { provide: { $utils } },
+    });
     const anchor = wrapper.find("a");
 
-    expect(anchor.text()).toMatch("42 Street, Some City, Postal Code, Some State");
+    expect(anchor.text()).toMatch(
+      "42 Street, Some City, Postal Code, Some State"
+    );
     expect(anchor.element.href).toContain("0,0");
   });
 
@@ -18,7 +22,10 @@ describe("UserLocation.vue", () => {
       state: "South Korea",
       coordinates: { latitude: 37.5513445, longitude: 126.9881487 },
     };
-    const wrapper = shallowMount(UserLocation, { props: { ...location } });
+    const wrapper = shallowMount(UserLocation, {
+      global: { provide: { $utils } },
+      props: { ...location }
+    });
     const anchor = wrapper.find("a");
 
     expect(anchor.text()).toMatch(`${location.street.number} ${location.street.name}, ${location.city}, ${location.state}`);
@@ -37,7 +44,9 @@ describe("UserLocation.vue", () => {
       state: "South Korea",
       coordinates: { latitude: 37.5513445, longitude: 126.9881487 },
     };
-    const wrapper = shallowMount(UserLocation);
+    const wrapper = shallowMount(UserLocation, {
+      global: { provide: { $utils } },
+    });
     const anchor = wrapper.find("a");
 
     expect(anchor.text()).toMatch("42 Street, Some City, Postal Code, Some State");

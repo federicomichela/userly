@@ -2,7 +2,7 @@ import _Vue, { App } from "vue";
 import axios from "axios";
 import { CommsService, Contacts, User } from "@/services/Comms/types";
 
-class Comms implements CommsService {
+export class Comms implements CommsService {
   public async getUser(): Promise<User> {
     const response: any = await axios.get("https://randomuser.me/api/");
     const user = response.data.results[0];
