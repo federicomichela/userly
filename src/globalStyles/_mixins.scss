@@ -1,0 +1,5 @@
+@mixin icon($icon-name) {
+  font-family: "Material Icons", serif;
+  content: $icon-name;
+  padding: .5em;
+}
