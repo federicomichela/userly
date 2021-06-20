@@ -1,6 +1,6 @@
 <template>
-  <div class="carousel">
-    <section>
+  <div class="carousel" ref="carousel">
+    <section class="carousel__navigation">
       <button @click="prev">
         <span class="material-icons-outlined">arrow_back_ios</span>
       </button>
@@ -10,7 +10,7 @@
       </button>
     </section>
 
-    <section v-if="currentPageItems">
+    <section v-if="currentPageItems" class="carousel__container">
       <UserCard v-for="(item, key) in currentPageItems" :key="key" :user-config="item" />
     </section>
   </div>
@@ -18,31 +18,33 @@
 
 <script lang="ts">
 /**
- * TODOs:
+ * TODO:
  * - add page selector
+ * - look into ts generics instead of using GenericObject (hack)
  * - abstraction: this component could potentially be refactored to use any component not just UsersCards, but to do so we need to
  *   dynamically import components...
  */
 
-import { computed, inject, onMounted, PropType, ref, watch } from "vue";
-import { GenericObject, UtilsService } from "@/services/Utils/types";
-import { User } from "@/services/Comms/types";
+import { computed, onMounted, PropType, ref, watch } from "vue";
+import { GenericObject } from "@/services/Utils/types";
 import UserCard from "../UserCard/UserCard.vue";
 
 export default {
   name: "Carousel",
   components: { UserCard },
   props: {
-    items: { type: Array as PropType<User>, required: true },
+    items: { type: Array as PropType<GenericObject>, required: true },
   },
   setup(props: GenericObject): GenericObject {
-    const utils: UtilsService | undefined = inject("$utils");
+    const carousel = ref<HTMLElement>();
 
     const currentPage = ref<number>(0);
-    const pages = ref<[][]>([]);
+    const pages = ref<GenericObject[][]>([]);
 
-    const currentPageItems = computed<[]>(() => pages.value[currentPage.value]);
+    const currentPageItems = computed<GenericObject[]>(() => pages.value[currentPage.value]);
     const navigationText = computed<string>(() => `${currentPage.value} / ${pages.value.length}`);
+
+    const itemMaxSize = 210; // TODO: find better way to grab thi value... it'd be UserCard.maxWidth + somePadding
 
     watch(() => props.users, updatedPages);
 
@@ -53,9 +55,10 @@ export default {
     });
 
     function updatedPages() {
-      const itemsPerPage = utils?.isDesktop() ? (utils?.isPortrait() ? 3 : 5) : (utils?.isPortrait() ? 1 : 3);
-      const itemsCopy = [...props.items];
-      let page: [];
+      const itemsPerPage = Math.floor((carousel.value?.offsetWidth || 0) / itemMaxSize);
+      const itemsCopy: GenericObject[] = [...props.items];
+
+      let page: GenericObject[];
 
       pages.value = [];
       while (itemsCopy.length) {
@@ -81,6 +84,7 @@ export default {
     }
 
     return {
+      carousel,
       currentPageItems,
       navigationText,
       prev,
@@ -90,6 +94,19 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.carousel {
+  width: 100%;
+  display: flex;
+  flex-direction: column-reverse;
 
+  &__navigation {}
+
+  &__container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-content: space-evenly;
+  }
+}
 </style>

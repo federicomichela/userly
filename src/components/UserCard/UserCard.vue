@@ -43,6 +43,7 @@ export default {
 .card {
   border: 1px solid black;
   width: 50%;
-  max-height: 60vh;
+  max-width: 200px;
+  max-height: 80vh;
 }
 </style>
