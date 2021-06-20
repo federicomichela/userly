@@ -1,7 +1,7 @@
 <template>
   <section>
-    <a :href="`mailto:${email}}`" class="email" target="_blank">{{ email }}</a>
-    <a :href="`tel:${phone}}`" class="phone" target="_blank">{{ phone }}</a>
+    <a :href="`mailto:${email}}`" class="email collapsable" :data-hover="email" target="_blank"><span>{{ email }}</span></a>
+    <a :href="`tel:${phone}}`" class="phone collapsable" :data-hover="phone" target="_blank"><span>{{ phone }}</span></a>
   </section>
 </template>
 

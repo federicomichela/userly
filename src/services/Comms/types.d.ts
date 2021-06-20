@@ -1,5 +1,6 @@
 export interface CommsService {
   getUser: () => Promise<User>;
+  getUsers: (results: number = 3) => Promise<User[]>;
 }
 
 export type Picture = {
