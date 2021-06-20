@@ -1,26 +1,29 @@
 <template>
-  <UserCard :user-config="user" />
+  <Carousel v-if="users" :items="users" />
 </template>
 
 <script lang="ts">
 import { inject, onMounted, ref } from "vue";
-import UserCard from "@/components/UserCard/UserCard.vue";
+import Carousel from "@/components/Carousel/Carousel.vue";
 import { CommsService, User } from "@/services/Comms/types";
 
 export default {
   name: "App",
   components: {
-    UserCard,
+    Carousel,
   },
   setup() {
     const $comms: CommsService | undefined = inject("$comms");
-    const user = ref<User>();
+
+    const users = ref<User[]>();
 
     onMounted(async () => {
-      user.value = await $comms?.getUser();
+      users.value = await $comms?.getUsers(10);
+
+      console.log(users);
     });
 
-    return { user };
+    return { users };
   },
 };
 </script>
