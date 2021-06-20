@@ -1,18 +1,26 @@
 <template>
   <div class="carousel" ref="carousel">
-    <section class="carousel__navigation">
-      <button @click="prev">
-        <span class="material-icons-outlined">arrow_back_ios</span>
-      </button>
-      <span>{{ navigationText }}</span>
-      <button @click="next">
-        <span class="material-icons-outlined">arrow_forward_ios</span>
-      </button>
-    </section>
+    <loader-ripple
+      class="carousel__content"
+      v-if="!items || !items.length"
+      style="margin: auto"
+    />
 
-    <section v-if="currentPageItems" class="carousel__container">
-      <UserCard v-for="(item, key) in currentPageItems" :key="key" :user-config="item" />
-    </section>
+    <div class="carousel__content" v-else>
+      <section class="carousel__page__navigation">
+        <button @click="prev" :disabled="pending">
+          <span class="material-icons-outlined">arrow_back_ios</span>
+        </button>
+        <button @click="next" :disabled="pending">
+          <span class="material-icons-outlined">arrow_forward_ios</span>
+        </button>
+      </section>
+
+      <section class="carousel__container">
+        <UserCard v-for="(item, key) in items" :key="key" :user-config="item" />
+      </section>
+
+    </div>
   </div>
 </template>
 
@@ -25,68 +33,81 @@
  *   dynamically import components...
  */
 
-import { computed, onMounted, PropType, ref, watch } from "vue";
+import { onMounted, onUnmounted, PropType, ref, watch } from "vue";
 import { GenericObject } from "@/services/Utils/types";
-import UserCard from "../UserCard/UserCard.vue";
+import UserCard from "@/components/UserCard/UserCard.vue";
+import LoaderRipple from "@/components/Loaders/LoaderRipple.vue";
+
+export enum Events {
+  PageUpdate = "page-update",
+}
 
 export default {
   name: "Carousel",
-  components: { UserCard },
+  components: { UserCard, LoaderRipple },
   props: {
-    items: { type: Array as PropType<GenericObject>, required: true },
+    items: { type: Array as PropType<GenericObject>, default: (): GenericObject[] => [] },
   },
-  setup(props: GenericObject): GenericObject {
+  emits: Object.values(Events),
+  setup(props: GenericObject, { emit }: GenericObject): GenericObject {
+    const itemMaxSize = 210; // TODO: find better way to grab this value... it's UserCard.maxWidth + somePadding
+    const maxPages = 20; // TODO: find out from randomuser.me how I can grab this value
+    let updateRequestId: number;
+
     const carousel = ref<HTMLElement>();
 
     const currentPage = ref<number>(0);
-    const pages = ref<GenericObject[][]>([]);
+    const itemsPerPage = ref<number>(1);
+    const pending = ref<boolean>(false);
 
-    const currentPageItems = computed<GenericObject[]>(() => pages.value[currentPage.value]);
-    const navigationText = computed<string>(() => `${currentPage.value} / ${pages.value.length}`);
-
-    const itemMaxSize = 210; // TODO: find better way to grab thi value... it'd be UserCard.maxWidth + somePadding
-
-    watch(() => props.users, updatedPages);
+    watch(() => currentPage.value, requestUpdate);
+    watch(() => props.items, () => pending.value = false);
 
     onMounted(() => {
-      window.addEventListener("resize", updatedPages);
+      window.addEventListener("resize", onResize);
 
-      updatedPages();
+      updateItemsPerPage();
+      next();
     });
 
-    function updatedPages() {
-      const itemsPerPage = Math.floor((carousel.value?.offsetWidth || 0) / itemMaxSize);
-      const itemsCopy: GenericObject[] = [...props.items];
+    onUnmounted(() => window.removeEventListener("resize", onResize));
 
-      let page: GenericObject[];
+    function onResize() {
+      updateItemsPerPage();
 
-      pages.value = [];
-      while (itemsCopy.length) {
-        page = itemsCopy.splice(0, itemsPerPage);
-        pages.value.push(page);
-      }
+      // trick to trigger request update only once a sequence of resizing requests have completed. eg when resizing a window
+      clearTimeout(updateRequestId);
+      updateRequestId = setTimeout(requestUpdate, 500);
+    }
+
+    function updateItemsPerPage() {
+      itemsPerPage.value = Math.floor((carousel.value?.offsetWidth || 1) / itemMaxSize);
     }
 
     function prev() {
-      if (!currentPage.value) {
-        currentPage.value = pages.value.length - 1;
+      if (currentPage.value === 1) {
+        currentPage.value = maxPages;
       } else {
         currentPage.value -= 1;
       }
     }
 
     function next() {
-      if (currentPage.value === pages.value.length - 1) {
-        currentPage.value = 0;
+      if (currentPage.value === maxPages) {
+        currentPage.value = 1;
       } else {
         currentPage.value += 1;
       }
     }
 
+    function requestUpdate() {
+      pending.value = true;
+      emit(Events.PageUpdate, currentPage.value, itemsPerPage.value);
+    }
+
     return {
       carousel,
-      currentPageItems,
-      navigationText,
+      pending,
       prev,
       next,
     };

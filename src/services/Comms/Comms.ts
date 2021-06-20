@@ -1,18 +1,22 @@
-import _Vue, { App } from "vue";
+import _Vue from "vue";
 import axios from "axios";
+import { setup } from "axios-cache-adapter";
 import { CommsService, Contacts, User } from "@/services/Comms/types";
 import { GenericObject } from "@/services/Utils/types";
 
 export class Comms implements CommsService {
+  private cacheMaxAge = 5 * 1000; // for testing purposes keeping this low
+  private api = setup({ cache: { maxAge: 1 * 60 * 1000 , exclude: { query: false } } });
+
   public async getUser(): Promise<User> {
-    const response: any = await axios.get("https://randomuser.me/api/");
+    const response: any = await this.api.get("https://randomuser.me/api/");
     const user = response.data.results[0];
 
     return Comms.formatUser(user);
   }
 
-  public async getUsers(results = 3): Promise<User[]> {
-    const response: any = await axios.get(`https://randomuser.me/api/?results=${results}`);
+  public async getUsers(page = 1, results = 10): Promise<User[]> {
+    const response: any = await this.api.get(`https://randomuser.me/api/?page=${page}&results=${results}&seed=userly`);
     const users = response.data.results;
 
     return users.map((user: GenericObject) => Comms.formatUser(user));

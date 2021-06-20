@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "axios-cache-adapter": "^2.7.3",
     "core-js": "^3.6.5",
     "material-icons": "^0.7.2",
     "vue": "^3.0.0"

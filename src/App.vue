@@ -1,5 +1,6 @@
 <template>
-  <Carousel v-if="users" :items="users" />
+  <h1>Userly</h1>
+  <Carousel :items="users" @page-update="requestResultsPage" />
 </template>
 
 <script lang="ts">
@@ -17,13 +18,11 @@ export default {
 
     const users = ref<User[]>();
 
-    onMounted(async () => {
-      users.value = await $comms?.getUsers(10);
+    async function requestResultsPage(page: number, results: number): Promise<void> {
+      users.value = await $comms?.getUsers(page, results);
+    }
 
-      console.log(users);
-    });
-
-    return { users };
+    return { users, requestResultsPage };
   },
 };
 </script>
@@ -41,13 +40,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: $theme-color-1;
 
   width: 100vw;
   min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  align-content: center;
 
   a {
     text-decoration: none;
