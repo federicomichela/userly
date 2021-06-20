@@ -15,7 +15,7 @@ export default defineComponent({
     const user = ref<any>();
 
     return { user };
-  }
+  },
 });
 </script>
 
@@ -61,8 +61,8 @@ body {
     &:hover::after {
       content: attr(data-hover);
       position: absolute;
-      font-size: .7em;
-      padding: .3em .5em;
+      font-size: 0.7em;
+      padding: 0.3em 0.5em;
       bottom: 2.5em;
       color: lightgray;
       background: gray;

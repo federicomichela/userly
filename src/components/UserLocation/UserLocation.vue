@@ -10,7 +10,8 @@
 
 <script lang="ts">
 import { Coordinates, Street } from "@/services/Comms/types";
-import { computed, watch } from "vue";
+import { computed, inject } from "vue";
+import { GenericObject, UtilsService } from "@/services/Utils/types";
 
 export default {
   name: "UserLocation",
@@ -21,40 +22,15 @@ export default {
     state: { type: String, required: false },
     coordinates: { type: Object as () => Coordinates, required: false },
   },
-  setup(props: any) {
+  setup(props: GenericObject): void {
+    const utils: UtilsService = inject("$utils");
+
     const fullAddress = computed<string>(() => {
-      if (Object.values(props).every((e: string | number) => !e)) {
-        return "42 Street, Some City, Postal Code, Some State";
-      }
-
-      const addressOrderedProps = [
-        "street.number",
-        "street.name",
-        "city",
-        "postcode",
-        "state",
-      ];
-      const address = [];
-      for (const prop of addressOrderedProps) {
-        let parts = prop.split(".");
-        let value = props[parts.splice(0, 1)];
-
-        if (!value) continue;
-
-        for (const subProp of parts) {
-          value = value[subProp];
-        }
-
-        if (value) {
-          if (parts.length && address.length) {
-            address[address.length - 1] += ` ${value}`;
-          } else {
-            address.push(value);
-          }
-        }
-      }
-
-      return address.join(", ");
+      return utils.toSortedString(
+        props,
+        ["street.number", "street.name", "city", "postcode", "state"],
+        "42 Street, Some City, Postal Code, Some State"
+      );
     });
 
     return { fullAddress };
