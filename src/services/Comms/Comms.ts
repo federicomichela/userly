@@ -1,5 +1,4 @@
 import _Vue from "vue";
-import axios from "axios";
 import { setup } from "axios-cache-adapter";
 import { CommsService, Contacts, User } from "@/services/Comms/types";
 import { GenericObject } from "@/services/Utils/types";
