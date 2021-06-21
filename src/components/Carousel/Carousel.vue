@@ -7,7 +7,7 @@
     />
 
     <div class="carousel__content" v-else>
-      <section class="carousel__page__navigation">
+      <section class="carousel__navigation">
         <button @click="prev" :disabled="pending">
           <span class="material-icons-outlined">arrow_back_ios</span>
         </button>
@@ -117,13 +117,28 @@ export default {
 
 <style lang="scss" scoped>
 .carousel {
-  width: 100%;
+  width: calc(100% - 4em);
   display: flex;
   flex-direction: column-reverse;
+  padding: 1em;
 
-  &__navigation {}
+  &__navigation {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &__content {
+    display: flex;
+    justify-content: space-evenly;
+    position: relative;
+  }
 
   &__container {
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;

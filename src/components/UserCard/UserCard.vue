@@ -41,9 +41,13 @@ export default {
 
 <style lang="scss" scoped>
 .card {
-  border: 1px solid black;
+  border: 1px solid var(--theme-color-2);
+  border-radius: 1em;
+  box-shadow: 0 5px 10px gray;
   width: 50%;
   max-width: 200px;
   max-height: 80vh;
+  background-color: var(--theme-color-1);
+  color: var(--theme-color-2);
 }
 </style>
