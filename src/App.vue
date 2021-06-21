@@ -14,7 +14,7 @@ import { CommsService, User } from "@/services/Comms/types";
 import ThemeColorPicker from "@/components/ThemeColorPicker/ThemeColorPicker.vue";
 import { GenericObject } from "@/services/Utils/types";
 
-export default defineComponent({
+export default {
   name: "App",
   components: {
     ThemeColorPicker,
@@ -43,7 +43,7 @@ export default defineComponent({
 
     return { users, globalVars, requestResultsPage, updateTheme };
   },
-});
+};
 </script>
 
 <style lang="scss">
