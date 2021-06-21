@@ -1,4 +1,11 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import CommsPlugin from "@/services/Comms/Comms";
+import UtilsPlugin from "@/services/Utils/Utils";
 
-createApp(App).mount("#app");
+const app = createApp(App);
+
+app.use(CommsPlugin);
+app.use(UtilsPlugin);
+
+app.mount("#app");
